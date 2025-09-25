@@ -15,6 +15,62 @@ enum UserRole {
   ADMIN
 }
 
+enum CommunityRole {
+  OWNER
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+enum CommunityStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+  PRIVATE
+  PUBLIC
+}
+
+enum JobPostType {
+  GLOBAL
+  COMMUNITY
+  DESIGNATED
+}
+
+enum JobPostCategory {
+  SKY
+  LADDER
+}
+
+enum LadderType {
+  MOVING_GOODS
+  ON_SITE
+}
+
+enum LoadingUnloadingService {
+  NONE
+  LOADING
+  UNLOADING
+  BOTH
+}
+
+enum TravelDistance {
+  WITHIN_JURISDICTION
+  OUTSIDE_JURISDICTION
+}
+
+enum PaymentMethod {
+  SIGNATURE
+  DIRECT_PAYMENT
+  CASH
+}
+
+enum WorkDateType {
+  URGENT
+  TODAY
+  TOMORROW
+  CUSTOM_DATE
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   kakaoId   BigInt? @unique
@@ -27,6 +83,11 @@ model User {
   
   // Relations
   equipment Equipment[]
+  communities CommunityMember[]
+  invitedMembers CommunityMember[] @relation("CommunityInviter")
+  posts CommunityPost[]
+  jobPosts JobPost[]
+  designatedJobPosts JobPost[] @relation("DesignatedJobPost")
 }
 
 model Equipment {
@@ -123,5 +184,141 @@ model Equipment {
   updatedAt                     DateTime @updatedAt 
 
   @@map("equipment")
+}
+
+model Community {
+  id          Int             @id @default(autoincrement())
+  title       String
+  description String?
+  slug        String          @unique // URL-friendly identifier
+  status      CommunityStatus @default(ACTIVE)
+  isPrivate   Boolean         @default(false)
+  maxMembers  Int?            // Optional member limit
+  
+  // Community Fee Settings (set by Group Leader)
+  defaultWorkFee    Decimal?   @default(5)   // Default Total Work Fee (%) set by Group Leader
+  defaultSupportFee  Decimal?   @default(2)   // Default Support Fee (%) set by Group Leader for "On-site" work
+  
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  
+  // Relations
+  members     CommunityMember[]
+  posts       CommunityPost[]
+  jobPosts    JobPost[]
+  
+  @@map("community")
+}
+
+model CommunityMember {
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  communityId Int
+  role        CommunityRole @default(MEMBER)
+  joinedAt    DateTime      @default(now())
+  invitedBy   Int?          // User who invited this member
+  isActive    Boolean       @default(true)
+  
+  // Relations
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  community   Community     @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  inviter     User?         @relation("CommunityInviter", fields: [invitedBy], references: [id])
+  
+  @@unique([userId, communityId])
+  @@map("community_member")
+}
+
+model CommunityPost {
+  id          Int       @id @default(autoincrement())
+  communityId Int
+  authorId    Int
+  title       String
+  content     String
+  isPinned    Boolean   @default(false)
+  isLocked    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  @@map("community_post")
+}
+
+model JobPost {
+  id            Int             @id @default(autoincrement())
+  type          JobPostType
+  category      JobPostCategory
+  authorId      Int
+  communityId   Int?
+  designatedUserId Int?
+  
+  // Equipment Selection (for SKY category)
+  equipmentType String?          // "1 ton", "2.5 ton", "3.5 ton", "5 ton", "18 ton", "19 ton", "3.5 tons of bending", "Refraction 5 tons", "Refraction 60M", "Refraction 70M"
+  equipmentLength Int?           // Length value based on equipment type
+  
+  // Ladder-specific fields (for LADDER category)
+  ladderType LadderType?        // MOVING_GOODS, ON_SITE
+  luggageVolume String?         // "1톤짐", "2.5톤짐", "5톤짐", "6톤짐", "7.5톤짐", "10톤짐", "12.5톤짐", "15톤짐", "17.5톤짐", "20톤짐"
+  workFloor Int?                 // Floor number for ladder work (2-25)
+  overallHeight Int?             // Overall height in meters
+  
+  // Ladder Work Schedule (for ON_SITE type)
+  ladderWorkDuration String?     // "1시간", "4시간", "8시간", "추가1시간"
+  ladderWorkHours Int?           // Additional hours for "추가1시간"
+  
+  // Ladder Options
+  loadingUnloadingService LoadingUnloadingService? // NONE, LOADING, UNLOADING, BOTH
+  travelDistance TravelDistance? // WITHIN_JURISDICTION, OUTSIDE_JURISDICTION
+  dumpService Boolean @default(false) // Dump function option
+  
+  // Ladder-specific pricing
+  movingFee Decimal?             // Moving fee (3,000 KRW base) for MOVING_GOODS
+  onSiteFee Decimal?             // On-site fee (5,000 KRW base) for ON_SITE
+  
+  // Work Details
+  workDateType  WorkDateType?    // URGENT, TODAY, TOMORROW, CUSTOM_DATE
+  workDate      DateTime?        // Custom date if CUSTOM_DATE is selected
+  arrivalTime   String?          // Time format: "6:30", "14:30"
+  workSchedule  String?          // "half day morning", "half day evening", "1 day", "2 days", "3 days", "monthly rent", "1 hour", "2 hours", etc.
+  customHours   Int?             // Custom hours if specified
+  
+  // Pricing
+  basePrice     Decimal?         // Calculated base price
+  finalPrice    Decimal?         // Final price after adjustments
+  isNightWork   Boolean          @default(false) // Night work (1.5x price)
+  priceAdjustment Int?           // User adjustment in 1000 won increments
+  
+  // Payment
+  paymentMethod PaymentMethod?
+  expectedPaymentDate String?    // "Same Day", "2 days", "7 days", "End of Month", "Beginning of Next Month", "End of Next Month", "Direct Confirmation"
+  
+  // Fee Structure
+  withFee       Boolean          @default(true)  // With/Without fee
+  totalWorkFee  Decimal?         // 10% of total work fee
+  unitPriceFee  Decimal?         // Fee based on unit price
+  
+  // Community Fee Structure (for COMMUNITY type)
+  communityWorkFee   Decimal?    // Total Work Fee (%) set by Group Leader
+  communitySupportFee Decimal?   // Support Fee (%) set by Group Leader for "On-site" work
+  
+  // Location and Contact
+  siteAddress   String?          // Work site address
+  contactNumber String?          // On-site contact number
+  
+  // Work Information
+  workContents  String?          // Work description
+  deliveryInfo  String?          // Information to be delivered
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  // Relations
+  author        User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  community     Community?      @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  designatedUser User?          @relation("DesignatedJobPost", fields: [designatedUserId], references: [id], onDelete: Cascade)
+  
+  @@map("job_post")
 }
 

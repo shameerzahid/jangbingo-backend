@@ -265,6 +265,925 @@
 			"description": "User management endpoints"
 		},
 		{
+			"name": "Job Posts",
+			"item": [
+				{
+					"name": "Create Global Sky Job Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"GLOBAL\",\n  \"category\": \"SKY\",\n  \"equipmentType\": \"3.5 ton\",\n  \"equipmentLength\": 30,\n  \"workDateType\": \"TODAY\",\n  \"arrivalTime\": \"09:00\",\n  \"workSchedule\": \"1 day\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"DIRECT_PAYMENT\",\n  \"expectedPaymentDate\": \"Same Day\",\n  \"withFee\": true,\n  \"siteAddress\": \"123 Construction Site, Seoul, South Korea\",\n  \"contactNumber\": \"010-1234-5678\",\n  \"workContents\": \"Crane operation for building construction\",\n  \"deliveryInfo\": \"Please arrive 30 minutes early for safety briefing\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Designated Sky Job Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"DESIGNATED\",\n  \"category\": \"SKY\",\n  \"designatedUserId\": 2,\n  \"equipmentType\": \"5 ton\",\n  \"equipmentLength\": 40,\n  \"workDateType\": \"TOMORROW\",\n  \"arrivalTime\": \"08:00\",\n  \"workSchedule\": \"2 days\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"DIRECT_PAYMENT\",\n  \"expectedPaymentDate\": \"Same Day\",\n  \"withFee\": true,\n  \"siteAddress\": \"456 Industrial Complex, Busan, South Korea\",\n  \"contactNumber\": \"010-9876-5432\",\n  \"workContents\": \"Heavy lifting operation for industrial project\",\n  \"deliveryInfo\": \"Please bring safety equipment and arrive 15 minutes early\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Community Sky Job Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"COMMUNITY\",\n  \"category\": \"SKY\",\n  \"communityId\": 1,\n  \"equipmentType\": \"3.5 ton\",\n  \"equipmentLength\": 30,\n  \"workDateType\": \"TODAY\",\n  \"arrivalTime\": \"10:00\",\n  \"workSchedule\": \"1 day\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"DIRECT_PAYMENT\",\n  \"expectedPaymentDate\": \"Same Day\",\n  \"withFee\": false,\n  \"siteAddress\": \"789 Community Construction Site, Incheon, South Korea\",\n  \"contactNumber\": \"010-5555-1234\",\n  \"workContents\": \"Community construction project - crane operation\",\n  \"deliveryInfo\": \"Community members only - please coordinate with group leader\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Global Ladder Job Post (Moving Goods)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"GLOBAL\",\n  \"category\": \"LADDER\",\n  \"ladderType\": \"MOVING_GOODS\",\n  \"luggageVolume\": \"5톤짐\",\n  \"workFloor\": 10,\n  \"overallHeight\": 30,\n  \"loadingUnloadingService\": \"BOTH\",\n  \"travelDistance\": \"WITHIN_JURISDICTION\",\n  \"dumpService\": false,\n  \"movingFee\": 3000,\n  \"workDateType\": \"TODAY\",\n  \"arrivalTime\": \"09:00\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"DIRECT_PAYMENT\",\n  \"expectedPaymentDate\": \"Same Day\",\n  \"withFee\": true,\n  \"siteAddress\": \"123 Apartment Complex, Seoul, South Korea\",\n  \"contactNumber\": \"010-1234-5678\",\n  \"workContents\": \"Moving furniture to 10th floor apartment\",\n  \"deliveryInfo\": \"Please coordinate with building management\"\n}\n\n/*\nLADDER JOB POST OPTIONS:\n\n1. LADDER TYPE:\n   - MOVING_GOODS: For moving furniture/appliances\n   - ON_SITE: For construction/repair work\n\n2. LUGGAGE VOLUME (톤짐):\n   - 1톤짐, 2.5톤짐, 5톤짐, 6톤짐\n   - 7.5톤짐, 10톤짐, 12.5톤짐, 15톤짐\n   - 17.5톤짐, 20톤짐\n\n3. WORK FLOOR: 2-25 (floor number)\n\n4. LOADING/UNLOADING SERVICE:\n   - NONE: No loading/unloading help\n   - LOADING: Loading service only\n   - UNLOADING: Unloading service only\n   - BOTH: Both loading and unloading\n\n5. TRAVEL DISTANCE:\n   - WITHIN_JURISDICTION: Local area\n   - OUTSIDE_JURISDICTION: Outside local area\n\n6. DUMP SERVICE: true/false\n\n7. MOVING FEE: Base fee in KRW (e.g., 3000)\n\nPRICING CALCULATION:\n- Base price from ladder truck price table\n- Based on work floor + luggage volume\n- Moving fee added separately\n- Platform fee model: Total Work Fee (10%) + Moving Fee\n*/"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Global Ladder Job Post (On Site)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"GLOBAL\",\n  \"category\": \"LADDER\",\n  \"ladderType\": \"ON_SITE\",\n  \"luggageVolume\": \"10톤짐\",\n  \"workFloor\": 15,\n  \"overallHeight\": 45,\n  \"ladderWorkDuration\": \"8시간\",\n  \"ladderWorkHours\": 2,\n  \"loadingUnloadingService\": \"NONE\",\n  \"travelDistance\": \"OUTSIDE_JURISDICTION\",\n  \"dumpService\": true,\n  \"onSiteFee\": 5000,\n  \"workDateType\": \"TOMORROW\",\n  \"arrivalTime\": \"08:00\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"DIRECT_PAYMENT\",\n  \"expectedPaymentDate\": \"Same Day\",\n  \"withFee\": true,\n  \"siteAddress\": \"456 Construction Site, Busan, South Korea\",\n  \"contactNumber\": \"010-9876-5432\",\n  \"workContents\": \"Demolition\",\n  \"deliveryInfo\": \"Heavy equipment operation required\"\n}\n\n/*\nON_SITE LADDER WORK FLOW:\n\n1. WORK SCHEDULE STEP EXISTS:\n   - ladderWorkDuration: \"1시간\", \"4시간\", \"8시간\", \"추가1시간\"\n   - ladderWorkHours: Additional hours when \"추가1시간\" selected\n   - Duration selector (days, half-days, hours)\n\n2. WORK CONTENTS BUTTONS:\n   - \"Demolition\": Demolition work\n   - \"Waste\": Waste disposal work\n   - \"Material Lifting\": Material lifting work\n\n3. PRICING CALCULATION:\n   - Base price from ladder truck price table\n   - Based on work floor + work schedule\n   - Price table reference: Floor + Duration\n   - Example: 15th floor + 8시간 = 70 (from table)\n\n4. PAYMENT METHOD:\n   - Platform Fee Model: Total Work Fee (10%) + On-site Fee (5,000 KRW)\n   - onSiteFee: 5000 KRW base fee\n\n5. PRICE TABLE REFERENCE:\n   - Site (Work Schedule): 1시간, 4시간, 8시간, 추가1시간\n   - Prices vary by floor (2-25층)\n   - Example: 15층 + 8시간 = 70 (70,000 KRW)\n\n6. NIGHT WORK LOGIC:\n   - If isNightWork: true, base price = 0 KRW\n   - Special pricing applies for night work\n*/"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Community Ladder Job Post (Moving Goods)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"COMMUNITY\",\n  \"category\": \"LADDER\",\n  \"communityId\": 1,\n  \"ladderType\": \"MOVING_GOODS\",\n  \"luggageVolume\": \"5톤짐\",\n  \"workFloor\": 12,\n  \"overallHeight\": 36,\n  \"loadingUnloadingService\": \"BOTH\",\n  \"travelDistance\": \"WITHIN_JURISDICTION\",\n  \"dumpService\": false,\n  \"movingFee\": 3000,\n  \"workDateType\": \"TODAY\",\n  \"arrivalTime\": \"10:00\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"DIRECT_PAYMENT\",\n  \"expectedPaymentDate\": \"당일\",\n  \"withFee\": true,\n  \"siteAddress\": \"789 Community Building, Seoul, South Korea\",\n  \"contactNumber\": \"010-5555-1234\",\n  \"workContents\": \"Moving furniture to 12th floor apartment\",\n  \"deliveryInfo\": \"Community members only - please coordinate with group leader\"\n}\n\n/*\nCOMMUNITY LADDER JOB POST (MOVING GOODS):\n\n1. COMMUNITY SELECTION:\n   - communityId: Selected community\n   - Job posted within community only\n   - Same ladder flow as Global but community-specific\n\n2. COMMUNITY FEE MODEL:\n   - Total Work Fee (%): Set by Group Leader (from community.defaultWorkFee)\n   - Moving Fee: 3,000 KRW (set by Group Leader)\n   - Support Fee: Set by Group Leader for \"On-site\" work\n   - Fee Flow: Receiver → Orderer (Not via Platform)\n\n3. PAYMENT METHOD OPTIONS:\n   - 결제 방식: 싸인(SIGNATURE), 직수(DIRECT_PAYMENT), 현수(CASH)\n   - 예상 결제일: 당일, 이틀, 7일, 월말, 익월초, 익월말, 직접확인\n\n4. FEE APPLICATION:\n   - 수수료 있음/없음 선택 가능\n   - 기본값: 수수료 있음\n   - 수수료 없음 선택 시:\n     * 작업총액수수료: 지급되지 않음\n     * 현장수수료: 지급되지 않음\n     * 모임방 지원 수수료: 지급여부 방장이 설정\n\n5. COMMUNITY-SPECIFIC FEATURES:\n   - Community points system\n   - Designated drivers within community\n   - Group leader coordination\n*/"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Community Ladder Job Post (On Site)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"COMMUNITY\",\n  \"category\": \"LADDER\",\n  \"communityId\": 1,\n  \"ladderType\": \"ON_SITE\",\n  \"luggageVolume\": \"15톤짐\",\n  \"workFloor\": 18,\n  \"overallHeight\": 54,\n  \"ladderWorkDuration\": \"8시간\",\n  \"ladderWorkHours\": 1,\n  \"loadingUnloadingService\": \"NONE\",\n  \"travelDistance\": \"OUTSIDE_JURISDICTION\",\n  \"dumpService\": true,\n  \"onSiteFee\": 5000,\n  \"workDateType\": \"TOMORROW\",\n  \"arrivalTime\": \"07:00\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"SIGNATURE\",\n  \"expectedPaymentDate\": \"이틀\",\n  \"withFee\": true,\n  \"siteAddress\": \"456 Community Construction Site, Busan, South Korea\",\n  \"contactNumber\": \"010-7777-8888\",\n  \"workContents\": \"Demolition\",\n  \"deliveryInfo\": \"Community construction project - specialized equipment required\"\n}\n\n/*\nCOMMUNITY LADDER JOB POST (ON SITE):\n\n1. COMMUNITY SELECTION:\n   - communityId: Selected community\n   - Job posted within community only\n   - Same ON_SITE flow as Global but community-specific\n\n2. COMMUNITY FEE MODEL:\n   - Total Work Fee (%): Set by Group Leader (from community.defaultWorkFee)\n   - On-site Fee: Set by Group Leader (from community.defaultSupportFee)\n   - Support Fee: Set by Group Leader for \"On-site\" work\n   - Fee Flow: Receiver → Orderer (Not via Platform)\n\n3. ON_SITE WORK SCHEDULE:\n   - ladderWorkDuration: \"1시간\", \"4시간\", \"8시간\", \"추가1시간\"\n   - ladderWorkHours: Additional hours when \"추가1시간\" selected\n   - Duration selector (days, half-days, hours)\n\n4. WORK CONTENTS OPTIONS:\n   - \"Demolition\": Demolition work\n   - \"Waste\": Waste disposal work\n   - \"Material Lifting\": Material lifting work\n\n5. PAYMENT METHOD OPTIONS:\n   - 결제 방식: 싸인(SIGNATURE), 직수(DIRECT_PAYMENT), 현수(CASH)\n   - 예상 결제일: 당일, 이틀, 7일, 월말, 익월초, 익월말, 직접확인\n\n6. COMMUNITY-SPECIFIC FEATURES:\n   - Community points system\n   - Designated drivers within community\n   - Group leader coordination\n   - Community construction projects\n*/"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Designated Ladder Job Post (Moving Goods)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"DESIGNATED\",\n  \"category\": \"LADDER\",\n  \"designatedUserId\": 2,\n  \"ladderType\": \"MOVING_GOODS\",\n  \"luggageVolume\": \"3.5톤짐\",\n  \"workFloor\": 8,\n  \"overallHeight\": 24,\n  \"loadingUnloadingService\": \"LOADING\",\n  \"travelDistance\": \"WITHIN_JURISDICTION\",\n  \"dumpService\": false,\n  \"movingFee\": 2500,\n  \"workDateType\": \"TODAY\",\n  \"arrivalTime\": \"14:00\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"DIRECT_PAYMENT\",\n  \"expectedPaymentDate\": \"Same Day\",\n  \"withFee\": true,\n  \"siteAddress\": \"789 Residential Building, Seoul, South Korea\",\n  \"contactNumber\": \"010-3333-4444\",\n  \"workContents\": \"Moving furniture to 8th floor apartment\",\n  \"deliveryInfo\": \"Please coordinate with designated driver\"\n}\n\n/*\nDESIGNATED LADDER JOB POST:\n\n1. DESIGNATED USER:\n   - designatedUserId: ID of specific user to receive the job\n   - Job is sent directly to this user only\n   - Same ladder flow as Global but targeted to specific user\n\n2. SAME LADDER OPTIONS AS GLOBAL:\n   - All luggage volume options (1톤짐 to 20톤짐)\n   - All work floor options (2-25)\n   - All loading/unloading services\n   - All travel distance options\n   - Dump service option\n\n3. PRICING:\n   - Same pricing calculation as Global\n   - Platform fee model applies\n   - Moving fee included\n\n4. WORKFLOW:\n   - User selects Designated Job Post\n   - User selects specific driver/user\n   - User selects Ladder category\n   - User selects Moving Goods or On Site\n   - Same form steps as Global ladder flow\n*/"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Designated Ladder Job Post (On Site)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"DESIGNATED\",\n  \"category\": \"LADDER\",\n  \"designatedUserId\": 3,\n  \"ladderType\": \"ON_SITE\",\n  \"luggageVolume\": \"15톤짐\",\n  \"workFloor\": 20,\n  \"overallHeight\": 60,\n  \"ladderWorkDuration\": \"4시간\",\n  \"ladderWorkHours\": 1,\n  \"loadingUnloadingService\": \"NONE\",\n  \"travelDistance\": \"OUTSIDE_JURISDICTION\",\n  \"dumpService\": true,\n  \"onSiteFee\": 8000,\n  \"workDateType\": \"TOMORROW\",\n  \"arrivalTime\": \"07:00\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"DIRECT_PAYMENT\",\n  \"expectedPaymentDate\": \"Same Day\",\n  \"withFee\": true,\n  \"siteAddress\": \"321 High-rise Building, Busan, South Korea\",\n  \"contactNumber\": \"010-7777-8888\",\n  \"workContents\": \"Material Lifting\",\n  \"deliveryInfo\": \"Specialized equipment required - coordinate with designated operator\"\n}\n\n/*\nDESIGNATED ON_SITE LADDER WORK:\n\n1. DESIGNATED USER:\n   - designatedUserId: Specific operator/worker selected\n   - Job sent directly to this user\n   - Same ON_SITE flow as Global\n\n2. ON_SITE WORK SCHEDULE:\n   - ladderWorkDuration: \"1시간\", \"4시간\", \"8시간\", \"추가1시간\"\n   - ladderWorkHours: Additional hours when \"추가1시간\" selected\n\n3. WORK CONTENTS OPTIONS:\n   - \"Demolition\": Demolition work\n   - \"Waste\": Waste disposal work\n   - \"Material Lifting\": Material lifting work (selected)\n\n4. HIGH-RISE WORK:\n   - workFloor: 20 (high-rise building)\n   - overallHeight: 60m\n   - Requires specialized equipment\n\n5. PRICING:\n   - Higher on-site fee for high-rise work (8,000 KRW)\n   - Same platform fee model: Total Work Fee (10%) + On-site Fee\n   - Time-based pricing for ON_SITE work\n\n6. PRICE TABLE REFERENCE:\n   - 20층 + 4시간 = 60 (60,000 KRW base price)\n   - Plus on-site fee: 8,000 KRW\n   - Plus platform fees\n*/"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Community Sky Job Post (With Custom Fees)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"COMMUNITY\",\n  \"category\": \"SKY\",\n  \"communityId\": 1,\n  \"equipmentType\": \"5 ton\",\n  \"equipmentLength\": 40,\n  \"workDateType\": \"TOMORROW\",\n  \"arrivalTime\": \"08:00\",\n  \"workSchedule\": \"2 days\",\n  \"isNightWork\": false,\n  \"paymentMethod\": \"DIRECT_PAYMENT\",\n  \"expectedPaymentDate\": \"Same Day\",\n  \"withFee\": false,\n  \"communityWorkFee\": 6,\n  \"communitySupportFee\": 3,\n  \"siteAddress\": \"456 Community Industrial Site, Busan, South Korea\",\n  \"contactNumber\": \"010-7777-8888\",\n  \"workContents\": \"Heavy lifting operation for community project\",\n  \"deliveryInfo\": \"Special community project - higher fees apply\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Job Posts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts?type=GLOBAL&category=SKY",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "GLOBAL"
+								},
+								{
+									"key": "category",
+									"value": "SKY"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job Post by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Job Post",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"workSchedule\": \"2 days\",\n  \"isNightWork\": true,\n  \"siteAddress\": \"Updated Construction Site, Busan, South Korea\",\n  \"workContents\": \"Updated crane operation for building construction\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Job Post",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Communities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts/communities/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts",
+								"communities",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Community Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/job-posts/communities/1/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"job-posts",
+								"communities",
+								"1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Job post management endpoints for Global, Community, and Designated job posts"
+		},
+		{
+			"name": "Communities",
+			"item": [
+				{
+					"name": "Create Community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Construction Workers Seoul\",\n  \"description\": \"A community for construction workers in Seoul area\",\n  \"slug\": \"construction-workers-seoul\",\n  \"status\": \"ACTIVE\",\n  \"isPrivate\": false,\n  \"maxMembers\": 100,\n  \"defaultWorkFee\": 5,\n  \"defaultSupportFee\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Communities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities?status=ACTIVE&isPrivate=false&search=construction",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ACTIVE"
+								},
+								{
+									"key": "isPrivate",
+									"value": "false"
+								},
+								{
+									"key": "search",
+									"value": "construction"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Communities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users from Communities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/users/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"users",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Community by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Community",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Construction Workers Seoul\",\n  \"description\": \"Updated description for construction workers community\",\n  \"maxMembers\": 150,\n  \"defaultWorkFee\": 7,\n  \"defaultSupportFee\": 3\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Community Fees Only",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"defaultWorkFee\": 8,\n  \"defaultSupportFee\": 4\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Community",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Join Community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"communityId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/join",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Leave Community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/1/leave",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"1",
+								"leave"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invite User to Community",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"communityId\": 1,\n  \"userId\": 2,\n  \"role\": \"MEMBER\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/invite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"invite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Community Members",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/1/members",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"1",
+								"members"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Member Role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": 2,\n  \"role\": \"MODERATOR\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/1/members/role",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"1",
+								"members",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Member from Community",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/communities/1/members/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"communities",
+								"1",
+								"members",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Community management endpoints for creating, joining, and managing communities"
+		},
+		{
 			"name": "Equipment",
 			"item": [
 				{
