@@ -1,0 +1,530 @@
+{
+	"info": {
+		"_postman_id": "jangbigo-api-collection",
+		"name": "JangbiGO Backend API",
+		"description": "Complete API collection for JangbiGO Backend with all equipment optional fields",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Kakao Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.token) {",
+									"        pm.environment.set('auth_token', response.data.token);",
+									"        console.log('Token saved:', response.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idToken\": \"your_kakao_id_token_here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/kakao-login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"kakao-login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for Kakao login and user management"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Health check endpoint"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users (Admin Only)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users?page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User (Admin Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"nickname\": \"johndoe\",\n  \"role\": \"USER\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@example.com\",\n  \"nickname\": \"updatednickname\",\n  \"role\": \"USER\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User (Admin Only)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints"
+		},
+		{
+			"name": "Equipment",
+			"item": [
+				{
+					"name": "Get All Equipment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/equipment?page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"equipment"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "type",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "userId",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Equipment by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/equipment/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"equipment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Equipment (All Fields)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"Truck\",\n  \"tonnage\": \"5 tons\",\n  \"length\": \"6.5m\",\n  \"axleLength\": \"4.2m\",\n  \"height\": \"3.5m\",\n  \"options\": \"GPS, Air Conditioning, Backup Camera\",\n  \"resultCd\": \"SUCCESS\",\n  \"resultMg\": \"Equipment registered successfully\",\n  \"carRegno\": \"12-345678\",\n  \"admRegno\": \"ADM123456\",\n  \"eraseDate\": \"2024-12-31\",\n  \"carName\": \"Hyundai Truck\",\n  \"carType\": \"Commercial Vehicle\",\n  \"carVinaryNo\": \"VIN123456789\",\n  \"moverType\": \"Diesel\",\n  \"use\": \"Commercial Transport\",\n  \"modelYear\": \"2023\",\n  \"color\": \"White\",\n  \"sourceGb\": \"Domestic\",\n  \"firstRegDate\": \"2023-01-15\",\n  \"detailType\": \"Heavy Duty\",\n  \"productDate\": \"2022-12-01\",\n  \"lastOwner\": \"Previous Owner Inc.\",\n  \"regno\": \"REG123456\",\n  \"locateUse\": \"Commercial\",\n  \"checkExpDate\": \"2025-01-15\",\n  \"confirmDate\": \"2024-01-15\",\n  \"closeDate\": \"\",\n  \"printName\": \"JangbiGO Transport\",\n  \"gdCount\": \"3\",\n  \"respOwnerDataInfo\": \"Owner data processed successfully\",\n  \"mainNo\": \"MAIN001\",\n  \"subNo\": \"SUB001\",\n  \"detailRegNo\": \"DETAIL123\",\n  \"detailRegdate\": \"2024-01-15\",\n  \"receiptNo\": \"RECEIPT123\",\n  \"mainChk\": \"CHECKED\",\n  \"gdetailText\": \"Detailed registration information\",\n  \"ebCount\": \"2\",\n  \"respMortgageDataInfo\": \"Mortgage data processed successfully\",\n  \"ebNo\": \"EB001\",\n  \"mortgageNo\": \"MORTGAGE123\",\n  \"mortgageeName\": \"Bank of Korea\",\n  \"mortgageeAddr\": \"123 Bank Street, Seoul\",\n  \"mortgagorName\": \"Equipment Owner\",\n  \"mortgagorAddr\": \"456 Owner Street, Seoul\",\n  \"debtorName\": \"Debtor Name\",\n  \"debtorAddr\": \"789 Debtor Street, Seoul\",\n  \"bondAmount\": \"50000000\",\n  \"mortgageDate\": \"2024-01-01\",\n  \"mortgageErase\": \"\",\n  \"mortgageClose\": \"\",\n  \"ed1Count\": \"1\",\n  \"respMortgageDt1Info\": \"Mortgage detail 1 processed\",\n  \"rangking\": \"1\",\n  \"ebDetailGb\": \"Detail Group A\",\n  \"edetailRegdate\": \"2024-01-15\",\n  \"edetailText\": \"Mortgage detail information\",\n  \"ed2Count\": \"1\",\n  \"respMortgageDt2Info\": \"Mortgage detail 2 processed\",\n  \"edetailType\": \"Type A\",\n  \"edetailCarno\": \"CAR123\",\n  \"edetailSetdate\": \"2024-01-15\",\n  \"edetailEraseDate\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/equipment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"equipment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Equipment (Minimal Fields)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"Truck\",\n  \"tonnage\": \"5 tons\",\n  \"height\": \"3.5m\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/equipment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"equipment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Equipment (All Fields)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"Updated Truck\",\n  \"tonnage\": \"7 tons\",\n  \"length\": \"7.0m\",\n  \"axleLength\": \"4.5m\",\n  \"height\": \"3.8m\",\n  \"options\": \"GPS, Air Conditioning, Backup Camera, LED Lights\",\n  \"resultCd\": \"UPDATED\",\n  \"resultMg\": \"Equipment updated successfully\",\n  \"carRegno\": \"12-345679\",\n  \"admRegno\": \"ADM123457\",\n  \"eraseDate\": \"2024-12-31\",\n  \"carName\": \"Updated Hyundai Truck\",\n  \"carType\": \"Commercial Vehicle\",\n  \"carVinaryNo\": \"VIN123456790\",\n  \"moverType\": \"Diesel\",\n  \"use\": \"Commercial Transport\",\n  \"modelYear\": \"2024\",\n  \"color\": \"Blue\",\n  \"sourceGb\": \"Domestic\",\n  \"firstRegDate\": \"2024-01-15\",\n  \"detailType\": \"Heavy Duty\",\n  \"productDate\": \"2023-12-01\",\n  \"lastOwner\": \"Updated Owner Inc.\",\n  \"regno\": \"REG123457\",\n  \"locateUse\": \"Commercial\",\n  \"checkExpDate\": \"2025-01-15\",\n  \"confirmDate\": \"2024-01-15\",\n  \"closeDate\": \"\",\n  \"printName\": \"Updated JangbiGO Transport\",\n  \"gdCount\": \"4\",\n  \"respOwnerDataInfo\": \"Updated owner data processed successfully\",\n  \"mainNo\": \"MAIN002\",\n  \"subNo\": \"SUB002\",\n  \"detailRegNo\": \"DETAIL124\",\n  \"detailRegdate\": \"2024-01-16\",\n  \"receiptNo\": \"RECEIPT124\",\n  \"mainChk\": \"UPDATED\",\n  \"gdetailText\": \"Updated detailed registration information\",\n  \"ebCount\": \"3\",\n  \"respMortgageDataInfo\": \"Updated mortgage data processed successfully\",\n  \"ebNo\": \"EB002\",\n  \"mortgageNo\": \"MORTGAGE124\",\n  \"mortgageeName\": \"Updated Bank of Korea\",\n  \"mortgageeAddr\": \"124 Bank Street, Seoul\",\n  \"mortgagorName\": \"Updated Equipment Owner\",\n  \"mortgagorAddr\": \"457 Owner Street, Seoul\",\n  \"debtorName\": \"Updated Debtor Name\",\n  \"debtorAddr\": \"790 Debtor Street, Seoul\",\n  \"bondAmount\": \"60000000\",\n  \"mortgageDate\": \"2024-01-02\",\n  \"mortgageErase\": \"\",\n  \"mortgageClose\": \"\",\n  \"ed1Count\": \"2\",\n  \"respMortgageDt1Info\": \"Updated mortgage detail 1 processed\",\n  \"rangking\": \"2\",\n  \"ebDetailGb\": \"Updated Detail Group A\",\n  \"edetailRegdate\": \"2024-01-16\",\n  \"edetailText\": \"Updated mortgage detail information\",\n  \"ed2Count\": \"2\",\n  \"respMortgageDt2Info\": \"Updated mortgage detail 2 processed\",\n  \"edetailType\": \"Updated Type A\",\n  \"edetailCarno\": \"CAR124\",\n  \"edetailSetdate\": \"2024-01-16\",\n  \"edetailEraseDate\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/equipment/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"equipment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Equipment (Partial Fields)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"Updated Truck\",\n  \"tonnage\": \"7 tons\",\n  \"height\": \"3.8m\",\n  \"options\": \"GPS, Air Conditioning, Backup Camera, LED Lights\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/equipment/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"equipment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Equipment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/equipment/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"equipment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Equipment management endpoints with all optional fields"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+} 

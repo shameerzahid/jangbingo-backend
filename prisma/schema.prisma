@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  kakaoId   BigInt? @unique
+  name      String?
+  email     String?  @unique
+  nickname  String?
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  equipment Equipment[]
+}
+
+model Equipment {
+  id                            Int   @id @default(autoincrement())
+
+  // Relations
+  userId                        Int
+  user                          User   @relation(fields: [userId], references: [id])
+
+  // Manual Fields
+
+  type                          String  // Vehicle Type
+  tonnage                       String
+  length                        String?
+  axleLength                    String?
+  height                        String
+  options                       String
+
+  
+  // Result Information
+  resultCd                      String?  
+  resultMg                      String?  
+  
+  // G-Section Basic Information
+  carRegno                      String?  
+  admRegno                      String?  
+  eraseDate                     String?  
+  carName                       String?  
+  carType                       String?  
+  carVinaryNo                   String?  
+  moverType                     String?  
+  use                           String?  
+  modelYear                     String?  
+  color                         String?  
+  sourceGb                      String?  
+  firstRegDate                  String?  
+  detailType                    String?  
+  productDate                   String?  
+  lastOwner                     String?  
+  regno                         String?  
+  locateUse                     String?  
+  checkExpDate                  String?  
+  confirmDate                   String?  
+  closeDate                     String?  
+  printName                     String?  
+  
+  // G-Section Detail Count
+  gdCount                       String? 
+  respOwnerDataInfo             String?    
+  
+  // G-Section Details
+  mainNo                        String?  
+  subNo                         String?  
+  detailRegNo                   String?  
+  detailRegdate                 String?  
+  receiptNo                     String?  
+  mainChk                       String?  
+  gdetailText                   String?  
+  
+  // E-Section Information
+  ebCount                       String?
+  respMortgageDataInfo          String?     
+  ebNo                          String?  
+  mortgageNo                    String?  
+  mortgageeName                 String?  
+  mortgageeAddr                 String?  
+  mortgagorName                 String?  
+  mortgagorAddr                 String?  
+  debtorName                    String?  
+  debtorAddr                    String?  
+  bondAmount                    String?  
+  mortgageDate                  String?  
+  mortgageErase                 String?  
+  mortgageClose                 String?  
+  
+  // E-Section Detail 1
+  ed1Count                      String?
+  respMortgageDt1Info           String?     
+  rangking                      String?  
+  ebDetailGb                    String?  
+  edetailRegdate                String?  
+  edetailText                   String?  
+  
+  // E-Section Detail 2
+  ed2Count                      String?     
+  respMortgageDt2Info           String?     
+  edetailType                   String?  
+  edetailCarno                  String?  
+  edetailSetdate                String?  
+  edetailEraseDate              String?  
+  
+  // Timestamps
+  createdAt                     DateTime @default(now()) 
+  updatedAt                     DateTime @updatedAt 
+
+  @@map("equipment")
+}
+
