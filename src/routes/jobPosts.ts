@@ -9,7 +9,7 @@ const jobPostController = new JobPostController();
 // Rate limiting for job post creation (5 posts per hour per user)
 const createJobPostLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // 5 job posts per hour
+  max: 25, // 5 job posts per hour
   message: {
     success: false,
     message: 'Too many job posts created. Please try again later.',

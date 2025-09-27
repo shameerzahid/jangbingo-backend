@@ -13,7 +13,18 @@ export const createJobPostSchema = z.object({
   
   // Ladder-specific fields (for LADDER category)
   ladderType: z.nativeEnum(LadderType).optional(),
-  luggageVolume: z.string().optional(),
+  luggageVolume: z.string().refine((val) => {
+    if (!val) return true; // Allow empty/undefined
+    const validValues = [
+      "1톤짐", "2.5톤짐", "5톤짐", "6톤짐", "7.5톤짐", 
+      "10톤짐", "12.5톤짐", "15톤짐", "17.5톤짐", "20톤짐",
+      "1 ton", "2.5 ton", "5 ton", "6 ton", "7.5 ton",
+      "10 ton", "12.5 ton", "15 ton", "17.5 ton", "20 ton"
+    ];
+    return validValues.includes(val);
+  }, {
+    message: "Invalid luggage volume. Please select from valid options: 1톤짐, 2.5톤짐, 5톤짐, 6톤짐, 7.5톤짐, 10톤짐, 12.5톤짐, 15톤짐, 17.5톤짐, 20톤짐 or English equivalents."
+  }).optional(),
   workFloor: z.number().int().min(2, 'Work floor must be at least 2').max(25, 'Work floor must be at most 25').optional(),
   overallHeight: z.number().int().min(1, 'Overall height must be at least 1 meter').max(100, 'Overall height must be at most 100 meters').optional(),
   
@@ -74,7 +85,18 @@ export const updateJobPostSchema = z.object({
   
   // Ladder-specific fields (for LADDER category)
   ladderType: z.nativeEnum(LadderType).optional(),
-  luggageVolume: z.string().optional(),
+  luggageVolume: z.string().refine((val) => {
+    if (!val) return true; // Allow empty/undefined
+    const validValues = [
+      "1톤짐", "2.5톤짐", "5톤짐", "6톤짐", "7.5톤짐", 
+      "10톤짐", "12.5톤짐", "15톤짐", "17.5톤짐", "20톤짐",
+      "1 ton", "2.5 ton", "5 ton", "6 ton", "7.5 ton",
+      "10 ton", "12.5 ton", "15 ton", "17.5 ton", "20 ton"
+    ];
+    return validValues.includes(val);
+  }, {
+    message: "Invalid luggage volume. Please select from valid options: 1톤짐, 2.5톤짐, 5톤짐, 6톤짐, 7.5톤짐, 10톤짐, 12.5톤짐, 15톤짐, 17.5톤짐, 20톤짐 or English equivalents."
+  }).optional(),
   workFloor: z.number().int().min(2, 'Work floor must be at least 2').max(25, 'Work floor must be at most 25').optional(),
   overallHeight: z.number().int().min(1, 'Overall height must be at least 1 meter').max(100, 'Overall height must be at most 100 meters').optional(),
   
