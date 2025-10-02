@@ -7,8 +7,8 @@ export interface CreateJobPostRequest {
   designatedUserId?: number | undefined;
   
   // Equipment Selection (for SKY category)
-  equipmentType?: string | undefined;
-  equipmentLength?: number | undefined;
+  equipmentType: string;
+  equipmentLengths: number[];
   
   // Ladder-specific fields (for LADDER category)
   ladderType?: LadderType | undefined;
@@ -30,24 +30,23 @@ export interface CreateJobPostRequest {
   onSiteFee?: number | undefined;
   
   // Work Details
-  workDateType?: WorkDateType | undefined;
+  workDateType: WorkDateType;
   workDate?: Date | undefined;
-  arrivalTime?: string | undefined;
-  workSchedule?: string | undefined;
+  arrivalTime: string;
+  workSchedule: string;
   customHours?: number | undefined;
   
   // Pricing
-  basePrice?: number | undefined;
-  finalPrice?: number | undefined;
+  workCost: number;
   isNightWork?: boolean | undefined;
   priceAdjustment?: number | undefined;
   
   // Payment
-  paymentMethod?: PaymentMethod | undefined;
-  expectedPaymentDate?: string | undefined;
+  paymentMethod: PaymentMethod;
+  expectedPaymentDate: string;
   
   // Fee Structure
-  withFee?: boolean | undefined;
+  withFee: boolean;
   totalWorkFee?: number | undefined;
   unitPriceFee?: number | undefined;
   
@@ -56,20 +55,20 @@ export interface CreateJobPostRequest {
   communitySupportFee?: number | undefined;
   
   // Location and Contact
-  siteAddress?: string | undefined;
-  contactNumber?: string | undefined;
+  siteAddress: string;
+  contactNumber: string;
   
   // Work Information
-  workContents?: string | undefined;
-  deliveryInfo?: string | undefined;
+  workContents: string;
+  deliveryInfo: string;
 }
 
 export interface UpdateJobPostRequest {
   category?: JobPostCategory | undefined;
   
   // Equipment Selection (for SKY category)
-  equipmentType?: string | undefined;
-  equipmentLength?: number | undefined;
+  equipmentType: string;
+  equipmentLengths: number[];
   
   // Ladder-specific fields (for LADDER category)
   ladderType?: LadderType | undefined;
@@ -91,24 +90,23 @@ export interface UpdateJobPostRequest {
   onSiteFee?: number | undefined;
   
   // Work Details
-  workDateType?: WorkDateType | undefined;
+  workDateType: WorkDateType;
   workDate?: Date | undefined;
-  arrivalTime?: string | undefined;
-  workSchedule?: string | undefined;
+  arrivalTime: string;
+  workSchedule: string;
   customHours?: number | undefined;
   
   // Pricing
-  basePrice?: number | undefined;
-  finalPrice?: number | undefined;
+  workCost: number;
   isNightWork?: boolean | undefined;
   priceAdjustment?: number | undefined;
   
   // Payment
-  paymentMethod?: PaymentMethod | undefined;
-  expectedPaymentDate?: string | undefined;
+  paymentMethod: PaymentMethod;
+  expectedPaymentDate: string;
   
   // Fee Structure
-  withFee?: boolean | undefined;
+  withFee: boolean;
   totalWorkFee?: number | undefined;
   unitPriceFee?: number | undefined;
   
@@ -117,12 +115,12 @@ export interface UpdateJobPostRequest {
   communitySupportFee?: number | undefined;
   
   // Location and Contact
-  siteAddress?: string | undefined;
-  contactNumber?: string | undefined;
+  siteAddress: string;
+  contactNumber: string;
   
   // Work Information
-  workContents?: string | undefined;
-  deliveryInfo?: string | undefined;
+  workContents: string;
+  deliveryInfo: string;
 }
 
 export interface JobPostFilters {
@@ -141,8 +139,8 @@ export interface JobPostResponse {
   designatedUserId?: number | undefined;
   
   // Equipment Selection (for SKY category)
-  equipmentType?: string | undefined;
-  equipmentLength?: number | undefined;
+  equipmentType: string;
+  equipmentLengths: number[];
   
   // Ladder-specific fields (for LADDER category)
   ladderType?: LadderType | undefined;
@@ -164,24 +162,23 @@ export interface JobPostResponse {
   onSiteFee?: number | undefined;
   
   // Work Details
-  workDateType?: WorkDateType | undefined;
+  workDateType: WorkDateType;
   workDate?: Date | undefined;
-  arrivalTime?: string | undefined;
-  workSchedule?: string | undefined;
+  arrivalTime: string;
+  workSchedule: string;
   customHours?: number | undefined;
   
   // Pricing
-  basePrice?: number | undefined;
-  finalPrice?: number | undefined;
+  workCost: number;
   isNightWork?: boolean | undefined;
   priceAdjustment?: number | undefined;
   
   // Payment
-  paymentMethod?: PaymentMethod | undefined;
-  expectedPaymentDate?: string | undefined;
+  paymentMethod: PaymentMethod;
+  expectedPaymentDate: string;
   
   // Fee Structure
-  withFee?: boolean | undefined;
+  withFee: boolean;
   totalWorkFee?: number | undefined;
   unitPriceFee?: number | undefined;
   
@@ -190,12 +187,12 @@ export interface JobPostResponse {
   communitySupportFee?: number | undefined;
   
   // Location and Contact
-  siteAddress?: string | undefined;
-  contactNumber?: string | undefined;
+  siteAddress: string;
+  contactNumber: string;
   
   // Work Information
-  workContents?: string | undefined;
-  deliveryInfo?: string | undefined;
+  workContents: string;
+  deliveryInfo: string;
   
   createdAt: Date;
   updatedAt: Date;

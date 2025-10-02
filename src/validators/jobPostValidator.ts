@@ -8,8 +8,8 @@ export const createJobPostSchema = z.object({
   designatedUserId: z.number().optional(),
   
   // Equipment Selection (for SKY category)
-  equipmentType: z.string().optional(),
-  equipmentLength: z.number().optional(),
+  equipmentType: z.string(),
+  equipmentLengths: z.array(z.number()).min(1, 'At least one equipment length is required'),
   
   // Ladder-specific fields (for LADDER category)
   ladderType: z.nativeEnum(LadderType).optional(),
@@ -42,24 +42,25 @@ export const createJobPostSchema = z.object({
   onSiteFee: z.number().min(0, 'On-site fee must be at least 0').optional(),
   
   // Work Details
-  workDateType: z.nativeEnum(WorkDateType).optional(),
-  workDate: z.date().optional(),
-  arrivalTime: z.string().optional(),
-  workSchedule: z.string().optional(),
+  workDateType: z.nativeEnum(WorkDateType),
+  workDate: z.string().datetime().optional().transform((val) => val ? new Date(val) : undefined),
+  arrivalTime: z.string(),
+  workSchedule: z.string(),
   customHours: z.number().optional(),
   
+  // Work Schedule Details
+  
   // Pricing
-  basePrice: z.number().optional(),
-  finalPrice: z.number().optional(),
+  workCost: z.number().min(0, 'Work cost must be at least 0'),
   isNightWork: z.boolean().optional(),
   priceAdjustment: z.number().optional(),
   
   // Payment
-  paymentMethod: z.nativeEnum(PaymentMethod).optional(),
-  expectedPaymentDate: z.string().optional(),
+  paymentMethod: z.nativeEnum(PaymentMethod),
+  expectedPaymentDate: z.string(),
   
   // Fee Structure
-  withFee: z.boolean().optional(),
+  withFee: z.boolean(),
   totalWorkFee: z.number().optional(),
   unitPriceFee: z.number().optional(),
   
@@ -68,20 +69,20 @@ export const createJobPostSchema = z.object({
   communitySupportFee: z.number().min(0).max(100).optional(),
   
   // Location and Contact
-  siteAddress: z.string().optional(),
-  contactNumber: z.string().optional(),
+  siteAddress: z.string(),
+  contactNumber: z.string(),
   
   // Work Information
-  workContents: z.string().optional(),
-  deliveryInfo: z.string().optional(),
-});
+  workContents: z.string(),
+  deliveryInfo: z.string(),
+}).strict();
 
 export const updateJobPostSchema = z.object({
   category: z.nativeEnum(JobPostCategory).optional(),
   
   // Equipment Selection (for SKY category)
-  equipmentType: z.string().optional(),
-  equipmentLength: z.number().optional(),
+  equipmentType: z.string(),
+  equipmentLengths: z.array(z.number()).min(1, 'At least one equipment length is required'),
   
   // Ladder-specific fields (for LADDER category)
   ladderType: z.nativeEnum(LadderType).optional(),
@@ -114,24 +115,25 @@ export const updateJobPostSchema = z.object({
   onSiteFee: z.number().min(0, 'On-site fee must be at least 0').optional(),
   
   // Work Details
-  workDateType: z.nativeEnum(WorkDateType).optional(),
-  workDate: z.date().optional(),
-  arrivalTime: z.string().optional(),
-  workSchedule: z.string().optional(),
+  workDateType: z.nativeEnum(WorkDateType),
+  workDate: z.string().datetime().optional().transform((val) => val ? new Date(val) : undefined),
+  arrivalTime: z.string(),
+  workSchedule: z.string(),
   customHours: z.number().optional(),
   
+  // Work Schedule Details
+  
   // Pricing
-  basePrice: z.number().optional(),
-  finalPrice: z.number().optional(),
+  workCost: z.number().min(0, 'Work cost must be at least 0'),
   isNightWork: z.boolean().optional(),
   priceAdjustment: z.number().optional(),
   
   // Payment
-  paymentMethod: z.nativeEnum(PaymentMethod).optional(),
-  expectedPaymentDate: z.string().optional(),
+  paymentMethod: z.nativeEnum(PaymentMethod),
+  expectedPaymentDate: z.string(),
   
   // Fee Structure
-  withFee: z.boolean().optional(),
+  withFee: z.boolean(),
   totalWorkFee: z.number().optional(),
   unitPriceFee: z.number().optional(),
   
@@ -140,17 +142,17 @@ export const updateJobPostSchema = z.object({
   communitySupportFee: z.number().min(0).max(100).optional(),
   
   // Location and Contact
-  siteAddress: z.string().optional(),
-  contactNumber: z.string().optional(),
+  siteAddress: z.string(),
+  contactNumber: z.string(),
   
   // Work Information
-  workContents: z.string().optional(),
-  deliveryInfo: z.string().optional(),
-});
+  workContents: z.string(),
+  deliveryInfo: z.string(),
+}).strict();
 
 export const jobPostFiltersSchema = z.object({
   type: z.nativeEnum(JobPostType).optional(),
   category: z.nativeEnum(JobPostCategory).optional(),
   communityId: z.number().optional(),
   authorId: z.number().optional(),
-});
+}).strict();

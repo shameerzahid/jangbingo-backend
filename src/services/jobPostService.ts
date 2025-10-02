@@ -37,11 +37,6 @@ export class JobPostService {
       await this.validateDesignatedUserAccess(userId, data.designatedUserId);
     }
 
-    // Calculate pricing for SKY category
-    let calculatedPrice = null;
-    if (data.category === JobPostCategory.SKY && data.equipmentType && data.workSchedule) {
-      calculatedPrice = this.calculatePrice(data.equipmentType, data.workSchedule, data.isNightWork);
-    }
 
     // For COMMUNITY type, get default fees from community settings
     let communityWorkFee = data.communityWorkFee;
@@ -64,65 +59,64 @@ export class JobPostService {
         type: data.type,
         category: data.category,
         authorId: userId,
-        communityId: data.communityId || null,
-        designatedUserId: data.designatedUserId || null,
+        communityId: data.communityId ?? null,
+        designatedUserId: data.designatedUserId ?? null,
         
-      // Equipment Selection
-      equipmentType: data.equipmentType || null,
-      equipmentLength: data.equipmentLength || null,
+        // Equipment Selection
+        equipmentType: data.equipmentType,
+        equipmentLengths: data.equipmentLengths,
       
       // Ladder-specific fields
-      ladderType: data.ladderType || null,
-      luggageVolume: data.luggageVolume || null,
-      workFloor: data.workFloor || null,
-      overallHeight: data.overallHeight || null,
+      ladderType: data.ladderType ?? null,
+      luggageVolume: data.luggageVolume ?? null,
+      workFloor: data.workFloor ?? null,
+      overallHeight: data.overallHeight ?? null,
       
       // Ladder Work Schedule (for ON_SITE type)
-      ladderWorkDuration: data.ladderWorkDuration || null,
-      ladderWorkHours: data.ladderWorkHours || null,
+      ladderWorkDuration: data.ladderWorkDuration ?? null,
+      ladderWorkHours: data.ladderWorkHours ?? null,
       
       // Ladder Options
-      loadingUnloadingService: data.loadingUnloadingService || null,
-      travelDistance: data.travelDistance || null,
+      loadingUnloadingService: data.loadingUnloadingService ?? null,
+      travelDistance: data.travelDistance ?? null,
       dumpService: data.dumpService || false,
       
       // Ladder-specific pricing
-      movingFee: data.movingFee || null,
-      onSiteFee: data.onSiteFee || null,
+      movingFee: data.movingFee ?? null,
+      onSiteFee: data.onSiteFee ?? null,
         
         // Work Details
-        workDateType: data.workDateType || null,
-        workDate: data.workDate || null,
-        arrivalTime: data.arrivalTime || null,
-        workSchedule: data.workSchedule || null,
-        customHours: data.customHours || null,
+        workDateType: data.workDateType,
+        workDate: data.workDate ?? null,
+        arrivalTime: data.arrivalTime,
+        workSchedule: data.workSchedule,
+        customHours: data.customHours ?? null,
         
         // Pricing
-        basePrice: calculatedPrice,
-        finalPrice: data.finalPrice || calculatedPrice,
+        workCost: data.workCost,
         isNightWork: data.isNightWork || false,
-        priceAdjustment: data.priceAdjustment || null,
+        priceAdjustment: data.priceAdjustment ?? null,
         
         // Payment
-        paymentMethod: data.paymentMethod || null,
-        expectedPaymentDate: data.expectedPaymentDate || null,
+        paymentMethod: data.paymentMethod,
+        expectedPaymentDate: data.expectedPaymentDate,
         
         // Fee Structure
-        withFee: data.withFee !== undefined ? data.withFee : true,
-        totalWorkFee: data.totalWorkFee || null,
-        unitPriceFee: data.unitPriceFee || null,
+        withFee: data.withFee,
+        totalWorkFee: data.totalWorkFee ?? null,
+        unitPriceFee: data.unitPriceFee ?? null,
         
         // Community Fee Structure (for COMMUNITY type)
-        communityWorkFee: communityWorkFee || null,
-        communitySupportFee: communitySupportFee || null,
+        communityWorkFee: communityWorkFee ?? null,
+        communitySupportFee: communitySupportFee ?? null,
         
         // Location and Contact
-        siteAddress: data.siteAddress || null,
-        contactNumber: data.contactNumber || null,
+        siteAddress: data.siteAddress,
+        contactNumber: data.contactNumber,
         
         // Work Information
-        workContents: data.workContents || null,
-        deliveryInfo: data.deliveryInfo || null,
+        workContents: data.workContents,
+        deliveryInfo: data.deliveryInfo,
       },
       include: {
         author: {
@@ -401,11 +395,17 @@ export class JobPostService {
   }
 
   private validateSkyJobPostData(data: CreateJobPostRequest): void {
-    // Validate equipment type and length
-    if (data.equipmentType && data.equipmentLength) {
+    // Validate equipment type and lengths
+    if (data.equipmentType && data.equipmentLengths) {
       const validLengths = this.equipmentLengths[data.equipmentType as keyof typeof this.equipmentLengths];
-      if (!validLengths || !validLengths.includes(data.equipmentLength)) {
-        throw new Error(`Invalid equipment length ${data.equipmentLength} for equipment type ${data.equipmentType}`);
+      if (!validLengths) {
+        throw new Error(`Invalid equipment type ${data.equipmentType}`);
+      }
+      
+      for (const length of data.equipmentLengths) {
+        if (!validLengths.includes(length)) {
+          throw new Error(`Invalid equipment length ${length} for equipment type ${data.equipmentType}. Valid lengths: ${validLengths.join(', ')}`);
+        }
       }
     }
 
@@ -419,10 +419,7 @@ export class JobPostService {
       throw new Error('Invalid arrival time format. Use format like "6:30" or "14:30"');
     }
 
-    // Validate work schedule
-    if (data.workSchedule && !this.isValidWorkSchedule(data.workSchedule)) {
-      throw new Error('Invalid work schedule format');
-    }
+    // workSchedule validation removed - now accepts any string
 
     // Validate custom hours
     if (data.workSchedule && data.workSchedule.includes('hour') && !data.customHours) {
@@ -435,93 +432,7 @@ export class JobPostService {
     return timeRegex.test(time);
   }
 
-  private isValidWorkSchedule(schedule: string): boolean {
-    const validSchedules = [
-      'half day morning', 'half day evening', '1 day', '2 days', '3 days', 
-      'monthly rent', '1 hour', '2 hours', '3 hours', '4 hours', '5 hours', 
-      '6 hours', '7 hours', '8 hours', '9 hours', '10 hours', '11 hours', '12 hours'
-    ];
-    return validSchedules.includes(schedule.toLowerCase());
-  }
 
-  private calculatePrice(equipmentType: string, workSchedule: string, isNightWork?: boolean): number {
-    // Base pricing table (in KRW)
-    const basePrices: { [key: string]: { [key: string]: number } } = {
-      '1 ton': {
-        'half day morning': 50000,
-        'half day evening': 50000,
-        '1 day': 80000,
-        '2 days': 150000,
-        '3 days': 220000,
-        'monthly rent': 2000000
-      },
-      '2.5 ton': {
-        'half day morning': 70000,
-        'half day evening': 70000,
-        '1 day': 120000,
-        '2 days': 220000,
-        '3 days': 320000,
-        'monthly rent': 3000000
-      },
-      '3.5 ton': {
-        'half day morning': 90000,
-        'half day evening': 90000,
-        '1 day': 160000,
-        '2 days': 300000,
-        '3 days': 440000,
-        'monthly rent': 4000000
-      },
-      '5 ton': {
-        'half day morning': 120000,
-        'half day evening': 120000,
-        '1 day': 220000,
-        '2 days': 420000,
-        '3 days': 620000,
-        'monthly rent': 6000000
-      },
-      '18 ton': {
-        'half day morning': 180000,
-        'half day evening': 180000,
-        '1 day': 350000,
-        '2 days': 680000,
-        '3 days': 1000000,
-        'monthly rent': 10000000
-      },
-      '19 ton': {
-        'half day morning': 200000,
-        'half day evening': 200000,
-        '1 day': 380000,
-        '2 days': 750000,
-        '3 days': 1100000,
-        'monthly rent': 11000000
-      }
-    };
-
-    let basePrice = 0;
-
-    // Get base price for equipment type and schedule
-    if (basePrices[equipmentType] && basePrices[equipmentType][workSchedule]) {
-      basePrice = basePrices[equipmentType][workSchedule];
-    } else if (workSchedule.includes('hour')) {
-      // Calculate hourly rate
-      const hoursStr = workSchedule.split(' ')[0];
-      if (hoursStr) {
-        const hours = parseInt(hoursStr);
-        const dailyRate = basePrices[equipmentType]?.['1 day'];
-        if (dailyRate) {
-          const hourlyRate = dailyRate / 8; // Assume 8 hours per day
-          basePrice = hourlyRate * hours;
-        }
-      }
-    }
-
-    // Apply night work multiplier (1.5x)
-    if (isNightWork) {
-      basePrice = basePrice * 1.5;
-    }
-
-    return Math.round(basePrice);
-  }
 
   private async validateCommunityAccess(userId: number, communityId: number): Promise<void> {
     const membership = await prisma.communityMember.findFirst({
@@ -592,8 +503,8 @@ export class JobPostService {
       designatedUserId: jobPost.designatedUserId || undefined,
       
       // Equipment Selection
-      equipmentType: jobPost.equipmentType || undefined,
-      equipmentLength: jobPost.equipmentLength || undefined,
+      equipmentType: jobPost.equipmentType,
+      equipmentLengths: jobPost.equipmentLengths,
       
       // Ladder-specific fields
       ladderType: jobPost.ladderType || undefined,
@@ -615,24 +526,23 @@ export class JobPostService {
       onSiteFee: jobPost.onSiteFee ? Number(jobPost.onSiteFee) : undefined,
       
       // Work Details
-      workDateType: jobPost.workDateType || undefined,
+      workDateType: jobPost.workDateType,
       workDate: jobPost.workDate || undefined,
-      arrivalTime: jobPost.arrivalTime || undefined,
-      workSchedule: jobPost.workSchedule || undefined,
+      arrivalTime: jobPost.arrivalTime,
+      workSchedule: jobPost.workSchedule,
       customHours: jobPost.customHours || undefined,
       
       // Pricing
-      basePrice: jobPost.basePrice ? Number(jobPost.basePrice) : undefined,
-      finalPrice: jobPost.finalPrice ? Number(jobPost.finalPrice) : undefined,
+      workCost: Number(jobPost.workCost),
       isNightWork: jobPost.isNightWork || false,
       priceAdjustment: jobPost.priceAdjustment || undefined,
       
       // Payment
-      paymentMethod: jobPost.paymentMethod || undefined,
-      expectedPaymentDate: jobPost.expectedPaymentDate || undefined,
+      paymentMethod: jobPost.paymentMethod,
+      expectedPaymentDate: jobPost.expectedPaymentDate,
       
       // Fee Structure
-      withFee: jobPost.withFee || false,
+      withFee: jobPost.withFee,
       totalWorkFee: jobPost.totalWorkFee ? Number(jobPost.totalWorkFee) : undefined,
       unitPriceFee: jobPost.unitPriceFee ? Number(jobPost.unitPriceFee) : undefined,
       
@@ -641,12 +551,12 @@ export class JobPostService {
       communitySupportFee: jobPost.communitySupportFee ? Number(jobPost.communitySupportFee) : undefined,
       
       // Location and Contact
-      siteAddress: jobPost.siteAddress || undefined,
-      contactNumber: jobPost.contactNumber || undefined,
+      siteAddress: jobPost.siteAddress,
+      contactNumber: jobPost.contactNumber,
       
       // Work Information
-      workContents: jobPost.workContents || undefined,
-      deliveryInfo: jobPost.deliveryInfo || undefined,
+      workContents: jobPost.workContents,
+      deliveryInfo: jobPost.deliveryInfo,
       
       createdAt: jobPost.createdAt,
       updatedAt: jobPost.updatedAt,

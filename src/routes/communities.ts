@@ -9,7 +9,7 @@ const communityController = new CommunityController();
 // Rate limiting for community creation (3 communities per hour per user)
 const createCommunityLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // 3 communities per hour
+  max: 10, // 3 communities per hour
   message: {
     success: false,
     message: 'Too many communities created. Please try again later.',

@@ -231,7 +231,8 @@ Same as Global but add:
 - `"CUSTOM_DATE"` - Custom date (provide workDate field)
 
 ### Work Date (workDate) - when CUSTOM_DATE:
-- Format: `"2024-01-25T09:00:00Z"` (ISO date string)
+- Format: `"2024-01-25T09:00:00Z"` (ISO 8601 datetime string)
+- Examples: `"2024-01-25T09:00:00Z"`, `"2024-02-15T08:30:00Z"`
 
 ### Arrival Time (arrivalTime):
 - Format: `"HH:MM"` (24-hour format)

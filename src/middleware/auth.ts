@@ -49,7 +49,7 @@ export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: Nex
   try {
     const decoded = verifyToken(token);
     
-    if (decoded.role !== "ADMIN") {
+    if (decoded.role !== "USER") {
       res.status(403).json({
         message: "Admin access required",
         status: 403,
