@@ -64,12 +64,6 @@ enum PaymentMethod {
   CASH
 }
 
-enum WorkDateType {
-  URGENT
-  TODAY
-  TOMORROW
-  CUSTOM_DATE
-}
 
 model User {
   id        Int      @id @default(autoincrement())
@@ -246,6 +240,22 @@ model CommunityPost {
   @@map("community_post")
 }
 
+model JobPostOptions {
+  id                    Int       @id @default(autoincrement())
+  jobPostId             Int       @unique
+  loadingUnloadingService String?   // "짐짜주기없음", "상차", "하차", "상하차", or any string
+  travelDistance        String?     // "관내", "관외", or any string
+  dumpService           Boolean   @default(false) // Dump function option
+  
+  // Relations
+  jobPost               JobPost   @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@map("job_post_options")
+}
+
 model JobPost {
   id            Int             @id @default(autoincrement())
   type          JobPostType
@@ -259,27 +269,22 @@ model JobPost {
   equipmentLengths Int[]         // Array of length values based on equipment type
   
   // Ladder-specific fields (for LADDER category)
-  ladderType LadderType?        // MOVING_GOODS, ON_SITE
-  luggageVolume String?         // "1톤짐", "2.5톤짐", "5톤짐", "6톤짐", "7.5톤짐", "10톤짐", "12.5톤짐", "15톤짐", "17.5톤짐", "20톤짐"
-  workFloor Int?                 // Floor number for ladder work (2-25)
-  overallHeight Int?             // Overall height in meters
+  ladderType LadderType?         // MOVING_GOODS, ON_SITE
+  machineType String?             // Any machine type description
+  luggageVolume String?          // Any cargo/luggage description
+  workFloor String?              // Floor number or description
+  overallHeight String?          // Height description
   
   // Ladder Work Schedule (for ON_SITE type)
   ladderWorkDuration String?     // "1시간", "4시간", "8시간", "추가1시간"
   ladderWorkHours Int?           // Additional hours for "추가1시간"
-  
-  // Ladder Options
-  loadingUnloadingService LoadingUnloadingService? // NONE, LOADING, UNLOADING, BOTH
-  travelDistance TravelDistance? // WITHIN_JURISDICTION, OUTSIDE_JURISDICTION
-  dumpService Boolean @default(false) // Dump function option
   
   // Ladder-specific pricing
   movingFee Decimal?             // Moving fee (3,000 KRW base) for MOVING_GOODS
   onSiteFee Decimal?             // On-site fee (5,000 KRW base) for ON_SITE
   
   // Work Details
-  workDateType  WorkDateType?    // URGENT, TODAY, TOMORROW, CUSTOM_DATE
-  workDate      DateTime?        // Custom date if CUSTOM_DATE is selected
+  workDateType  String?          // Free-form work date type (any string)
   arrivalTime   String?          // Time format: "6:30", "14:30"
   workSchedule  String           // "half day morning", "half day evening", "1 day", "2 days", "3 days", "monthly rent", "1 hour", "2 hours", etc.
   customHours   Int?             // Custom hours if specified
@@ -318,6 +323,7 @@ model JobPost {
   author        User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
   community     Community?      @relation(fields: [communityId], references: [id], onDelete: Cascade)
   designatedUser User?          @relation("DesignatedJobPost", fields: [designatedUserId], references: [id], onDelete: Cascade)
+  options       JobPostOptions? // One-to-one relation
   
   @@map("job_post")
 }

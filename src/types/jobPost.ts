@@ -1,4 +1,4 @@
-import { JobPostType, JobPostCategory, PaymentMethod, WorkDateType, LadderType, LoadingUnloadingService, TravelDistance } from '@prisma/client';
+import { JobPostType, JobPostCategory, PaymentMethod, LadderType } from '@prisma/client';
 
 export interface CreateJobPostRequest {
   type: JobPostType;
@@ -6,34 +6,36 @@ export interface CreateJobPostRequest {
   communityId?: number | undefined;
   designatedUserId?: number | undefined;
   
-  // Equipment Selection (for SKY category)
-  equipmentType: string;
-  equipmentLengths: number[];
+  // Equipment Selection (Required for SKY, not needed for LADDER)
+  equipmentType?: string | undefined;
+  equipmentLengths?: number[] | undefined;
   
   // Ladder-specific fields (for LADDER category)
   ladderType?: LadderType | undefined;
+  machineType?: string | undefined;
   luggageVolume?: string | undefined;
-  workFloor?: number | undefined;
-  overallHeight?: number | undefined;
+  workFloor?: string | undefined;
+  overallHeight?: string | undefined;
   
   // Ladder Work Schedule (for ON_SITE type)
   ladderWorkDuration?: string | undefined;
   ladderWorkHours?: number | undefined;
   
-  // Ladder Options
-  loadingUnloadingService?: LoadingUnloadingService | undefined;
-  travelDistance?: TravelDistance | undefined;
-  dumpService?: boolean | undefined;
+  // Ladder Options (Optional) - Will be saved in separate JobPostOptions table
+  options?: {
+    loadingUnloadingService?: string | undefined;
+    travelDistance?: string | undefined;
+    dumpService?: boolean | undefined;
+  } | undefined;
   
   // Ladder-specific pricing
   movingFee?: number | undefined;
   onSiteFee?: number | undefined;
   
   // Work Details
-  workDateType: WorkDateType;
-  workDate?: Date | undefined;
+  workDateType: string;
   arrivalTime: string;
-  workSchedule: string;
+  workSchedule?: string | undefined;
   customHours?: number | undefined;
   
   // Pricing
@@ -59,41 +61,43 @@ export interface CreateJobPostRequest {
   contactNumber: string;
   
   // Work Information
-  workContents: string;
+  workContents?: string | undefined;
   deliveryInfo: string;
 }
 
 export interface UpdateJobPostRequest {
   category?: JobPostCategory | undefined;
   
-  // Equipment Selection (for SKY category)
-  equipmentType: string;
-  equipmentLengths: number[];
+  // Equipment Selection (Required for SKY, not needed for LADDER)
+  equipmentType?: string | undefined;
+  equipmentLengths?: number[] | undefined;
   
   // Ladder-specific fields (for LADDER category)
   ladderType?: LadderType | undefined;
+  machineType?: string | undefined;
   luggageVolume?: string | undefined;
-  workFloor?: number | undefined;
-  overallHeight?: number | undefined;
+  workFloor?: string | undefined;
+  overallHeight?: string | undefined;
   
   // Ladder Work Schedule (for ON_SITE type)
   ladderWorkDuration?: string | undefined;
   ladderWorkHours?: number | undefined;
   
-  // Ladder Options
-  loadingUnloadingService?: LoadingUnloadingService | undefined;
-  travelDistance?: TravelDistance | undefined;
-  dumpService?: boolean | undefined;
+  // Ladder Options (Optional) - Will be saved in separate JobPostOptions table
+  options?: {
+    loadingUnloadingService?: string | undefined;
+    travelDistance?: string | undefined;
+    dumpService?: boolean | undefined;
+  } | undefined;
   
   // Ladder-specific pricing
   movingFee?: number | undefined;
   onSiteFee?: number | undefined;
   
   // Work Details
-  workDateType: WorkDateType;
-  workDate?: Date | undefined;
+  workDateType: string;
   arrivalTime: string;
-  workSchedule: string;
+  workSchedule?: string | undefined;
   customHours?: number | undefined;
   
   // Pricing
@@ -138,34 +142,36 @@ export interface JobPostResponse {
   communityId?: number | undefined;
   designatedUserId?: number | undefined;
   
-  // Equipment Selection (for SKY category)
-  equipmentType: string;
-  equipmentLengths: number[];
+  // Equipment Selection (Required for SKY, not needed for LADDER)
+  equipmentType?: string | undefined;
+  equipmentLengths?: number[] | undefined;
   
   // Ladder-specific fields (for LADDER category)
   ladderType?: LadderType | undefined;
+  machineType?: string | undefined;
   luggageVolume?: string | undefined;
-  workFloor?: number | undefined;
-  overallHeight?: number | undefined;
+  workFloor?: string | undefined;
+  overallHeight?: string | undefined;
   
   // Ladder Work Schedule (for ON_SITE type)
   ladderWorkDuration?: string | undefined;
   ladderWorkHours?: number | undefined;
   
-  // Ladder Options
-  loadingUnloadingService?: LoadingUnloadingService | undefined;
-  travelDistance?: TravelDistance | undefined;
-  dumpService?: boolean | undefined;
+  // Ladder Options (Optional) - Will be saved in separate JobPostOptions table
+  options?: {
+    loadingUnloadingService?: string | undefined;
+    travelDistance?: string | undefined;
+    dumpService?: boolean | undefined;
+  } | undefined;
   
   // Ladder-specific pricing
   movingFee?: number | undefined;
   onSiteFee?: number | undefined;
   
   // Work Details
-  workDateType: WorkDateType;
-  workDate?: Date | undefined;
+  workDateType: string;
   arrivalTime: string;
-  workSchedule: string;
+  workSchedule?: string | undefined;
   customHours?: number | undefined;
   
   // Pricing

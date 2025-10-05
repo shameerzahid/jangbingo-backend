@@ -27,6 +27,11 @@ export class JobPostService {
       this.validateSkyJobPostData(data);
     }
 
+    // Validate LADDER category specific fields
+    if (data.category === JobPostCategory.LADDER) {
+      this.validateLadderJobPostData(data);
+    }
+
     // Check if user has permission to post in community (if community type)
     if (data.type === JobPostType.COMMUNITY && data.communityId) {
       await this.validateCommunityAccess(userId, data.communityId);
@@ -62,12 +67,13 @@ export class JobPostService {
         communityId: data.communityId ?? null,
         designatedUserId: data.designatedUserId ?? null,
         
-        // Equipment Selection
-        equipmentType: data.equipmentType,
-        equipmentLengths: data.equipmentLengths,
+        // Equipment Selection (Required for SKY, Optional for LADDER)
+        equipmentType: data.equipmentType ?? null,
+        equipmentLengths: data.equipmentLengths ?? [],
       
       // Ladder-specific fields
       ladderType: data.ladderType ?? null,
+      machineType: data.machineType ?? null,
       luggageVolume: data.luggageVolume ?? null,
       workFloor: data.workFloor ?? null,
       overallHeight: data.overallHeight ?? null,
@@ -76,10 +82,7 @@ export class JobPostService {
       ladderWorkDuration: data.ladderWorkDuration ?? null,
       ladderWorkHours: data.ladderWorkHours ?? null,
       
-      // Ladder Options
-      loadingUnloadingService: data.loadingUnloadingService ?? null,
-      travelDistance: data.travelDistance ?? null,
-      dumpService: data.dumpService || false,
+    // Ladder Options - Moved to JobPostOptions table
       
       // Ladder-specific pricing
       movingFee: data.movingFee ?? null,
@@ -87,9 +90,8 @@ export class JobPostService {
         
         // Work Details
         workDateType: data.workDateType,
-        workDate: data.workDate ?? null,
         arrivalTime: data.arrivalTime,
-        workSchedule: data.workSchedule,
+        workSchedule: data.workSchedule ?? '',
         customHours: data.customHours ?? null,
         
         // Pricing
@@ -115,7 +117,7 @@ export class JobPostService {
         contactNumber: data.contactNumber,
         
         // Work Information
-        workContents: data.workContents,
+        workContents: data.workContents ?? null,
         deliveryInfo: data.deliveryInfo,
       },
       include: {
@@ -139,8 +141,21 @@ export class JobPostService {
             nickname: true,
           },
         },
+        options: true, // Include JobPostOptions relation
       },
     });
+
+    // Create JobPostOptions if provided
+    if (data.options) {
+      await prisma.jobPostOptions.create({
+        data: {
+          jobPostId: jobPost.id,
+          loadingUnloadingService: data.options.loadingUnloadingService ?? null,
+          travelDistance: data.options.travelDistance ?? null,
+          dumpService: data.options.dumpService || false,
+        },
+      });
+    }
 
     return this.formatJobPostResponse(jobPost);
   }
@@ -202,6 +217,7 @@ export class JobPostService {
             nickname: true,
           },
         },
+        options: true, // Include JobPostOptions relation
       },
       orderBy: {
         createdAt: 'desc',
@@ -235,6 +251,7 @@ export class JobPostService {
             nickname: true,
           },
         },
+        options: true, // Include JobPostOptions relation
       },
     });
 
@@ -263,6 +280,12 @@ export class JobPostService {
     if (data.category !== undefined) {
       updateData.category = data.category;
     }
+    
+    // Update other basic fields if provided
+    if (data.machineType !== undefined) updateData.machineType = data.machineType;
+    if (data.luggageVolume !== undefined) updateData.luggageVolume = data.luggageVolume;
+    if (data.workFloor !== undefined) updateData.workFloor = data.workFloor;
+    if (data.overallHeight !== undefined) updateData.overallHeight = data.overallHeight;
 
     const updatedJobPost = await prisma.jobPost.update({
       where: { id },
@@ -288,8 +311,27 @@ export class JobPostService {
             nickname: true,
           },
         },
+        options: true, // Include JobPostOptions relation
       },
     });
+
+    // Update JobPostOptions if provided
+    if (data.options) {
+      await prisma.jobPostOptions.upsert({
+        where: { jobPostId: id },
+        update: {
+          loadingUnloadingService: data.options.loadingUnloadingService ?? null,
+          travelDistance: data.options.travelDistance ?? null,
+          dumpService: data.options.dumpService || false,
+        },
+        create: {
+          jobPostId: id,
+          loadingUnloadingService: data.options.loadingUnloadingService ?? null,
+          travelDistance: data.options.travelDistance ?? null,
+          dumpService: data.options.dumpService || false,
+        },
+      });
+    }
 
     return this.formatJobPostResponse(updatedJobPost);
   }
@@ -392,26 +434,33 @@ export class JobPostService {
     if (data.type === JobPostType.DESIGNATED && !data.designatedUserId) {
       throw new Error('Designated user ID is required for designated job posts');
     }
+
+    // withFee is required for COMMUNITY type job posts
+    if (data.type === JobPostType.COMMUNITY && data.withFee === undefined) {
+      throw new Error('withFee field is required for community job posts');
+    }
   }
 
   private validateSkyJobPostData(data: CreateJobPostRequest): void {
-    // Validate equipment type and lengths
-    if (data.equipmentType && data.equipmentLengths) {
-      const validLengths = this.equipmentLengths[data.equipmentType as keyof typeof this.equipmentLengths];
-      if (!validLengths) {
-        throw new Error(`Invalid equipment type ${data.equipmentType}`);
-      }
-      
-      for (const length of data.equipmentLengths) {
-        if (!validLengths.includes(length)) {
-          throw new Error(`Invalid equipment length ${length} for equipment type ${data.equipmentType}. Valid lengths: ${validLengths.join(', ')}`);
-        }
-      }
+    // equipmentType and equipmentLengths are required for SKY category
+    if (!data.equipmentType) {
+      throw new Error('Equipment type is required for SKY category');
     }
-
-    // Validate work date
-    if (data.workDateType === 'CUSTOM_DATE' && !data.workDate) {
-      throw new Error('Work date is required when work date type is CUSTOM_DATE');
+    
+    if (!data.equipmentLengths || data.equipmentLengths.length === 0) {
+      throw new Error('Equipment lengths are required for SKY category');
+    }
+    
+    // Validate equipment type and lengths
+    const validLengths = this.equipmentLengths[data.equipmentType as keyof typeof this.equipmentLengths];
+    if (!validLengths) {
+      throw new Error(`Invalid equipment type ${data.equipmentType}`);
+    }
+    
+    for (const length of data.equipmentLengths) {
+      if (!validLengths.includes(length)) {
+        throw new Error(`Invalid equipment length ${length} for equipment type ${data.equipmentType}. Valid lengths: ${validLengths.join(', ')}`);
+      }
     }
 
     // Validate arrival time format
@@ -420,10 +469,28 @@ export class JobPostService {
     }
 
     // workSchedule validation removed - now accepts any string
+    // customHours validation removed - no longer required
+  }
 
-    // Validate custom hours
-    if (data.workSchedule && data.workSchedule.includes('hour') && !data.customHours) {
-      throw new Error('Custom hours required when work schedule includes hours');
+  private validateLadderJobPostData(data: CreateJobPostRequest): void {    
+    // luggageVolume must be provided for LADDER category
+    if (!data.luggageVolume) {
+      throw new Error('Luggage volume is required for LADDER category');
+    }
+    
+    // machineType must be provided for LADDER category
+    if (!data.machineType) {
+      throw new Error('Machine type is required for LADDER category');
+    }
+    
+    // workFloor must be provided for LADDER category
+    if (!data.workFloor) {
+      throw new Error('Work floor is required for LADDER category');
+    }
+    
+    // overallHeight must be provided for LADDER category
+    if (!data.overallHeight) {
+      throw new Error('Overall height is required for LADDER category');
     }
   }
 
@@ -508,6 +575,7 @@ export class JobPostService {
       
       // Ladder-specific fields
       ladderType: jobPost.ladderType || undefined,
+      machineType: jobPost.machineType || undefined,
       luggageVolume: jobPost.luggageVolume || undefined,
       workFloor: jobPost.workFloor || undefined,
       overallHeight: jobPost.overallHeight || undefined,
@@ -516,10 +584,12 @@ export class JobPostService {
       ladderWorkDuration: jobPost.ladderWorkDuration || undefined,
       ladderWorkHours: jobPost.ladderWorkHours || undefined,
       
-      // Ladder Options
-      loadingUnloadingService: jobPost.loadingUnloadingService || undefined,
-      travelDistance: jobPost.travelDistance || undefined,
-      dumpService: jobPost.dumpService || false,
+      // Ladder Options (from separate JobPostOptions table)
+      options: jobPost.options ? {
+        loadingUnloadingService: jobPost.options.loadingUnloadingService || undefined,
+        travelDistance: jobPost.options.travelDistance || undefined,
+        dumpService: jobPost.options.dumpService || false,
+      } : undefined,
       
       // Ladder-specific pricing
       movingFee: jobPost.movingFee ? Number(jobPost.movingFee) : undefined,
@@ -527,7 +597,6 @@ export class JobPostService {
       
       // Work Details
       workDateType: jobPost.workDateType,
-      workDate: jobPost.workDate || undefined,
       arrivalTime: jobPost.arrivalTime,
       workSchedule: jobPost.workSchedule,
       customHours: jobPost.customHours || undefined,

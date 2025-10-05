@@ -225,14 +225,9 @@ Same as Global but add:
 ## 4. COMMON FIELDS
 
 ### Work Date Type (workDateType):
-- `"URGENT"` - Urgent work
-- `"TODAY"` - Today
-- `"TOMORROW"` - Tomorrow
-- `"CUSTOM_DATE"` - Custom date (provide workDate field)
-
-### Work Date (workDate) - when CUSTOM_DATE:
-- Format: `"2024-01-25T09:00:00Z"` (ISO 8601 datetime string)
-- Examples: `"2024-01-25T09:00:00Z"`, `"2024-02-15T08:30:00Z"`
+- **Format:** Any string (free-form text)
+- **Examples:** `"URGENT"`, `"TODAY"`, `"TOMORROW"`, `"CUSTOM_DATE"`, `"Next Week"`, `"ASAP"`, `"Flexible"`
+- **Note:** No longer restricted to specific enum values
 
 ### Arrival Time (arrivalTime):
 - Format: `"HH:MM"` (24-hour format)
@@ -259,8 +254,9 @@ Same as Global but add:
 - `"직접확인"`
 
 ### With Fee (withFee):
-- `true` - Apply platform fees (default)
+- `true` - Apply platform fees
 - `false` - No platform fees
+- **REQUIRED for COMMUNITY job posts** - User must explicitly choose
 
 ---
 
